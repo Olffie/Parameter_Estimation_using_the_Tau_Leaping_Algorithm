@@ -3,6 +3,7 @@
 Created on Fri Feb 26 12:36:51 2021
 
 @author: Olaf
+Chapter 3/4
 """
 
 "Tau leaping with (Estimation one reaction) -> PD/normal"
@@ -25,55 +26,51 @@ tau = 0.1
 aantal = 100
 erin = 0
 
-for k in range(400):
-    X = [500,200,0,0]
-    a=[0,0,0]
-    t=0
-    tfinal = 30
-    timeaxis = [0]
-    concentrationattime = [X.copy()]
-    productattime = [X[2]]
-    substrateattime =  [X[0]]
-    reactions0 = []
-    
-    X_var =[]
-    Y_var = []
-    Z_var = []
-    
-    
-    
-    while t<tfinal:
-        X_var.append(X[0]*X[1]*tau)
-        Y_var.append(X[2]*tau)
-        a[0] = c[0]*X[0]*X[1]
-        a[1] = c[1]*X[2]
-        a[2] = c[2]*X[2]
-        p0 = np.random.poisson(a[0]*tau)
-        p1 = np.random.poisson(a[1]*tau)
-        p2 = np.random.poisson(a[2]*tau)
-        Z_var.append(p0-p1)
-        p = [p0,p1,p2]
-        reactions0.append(p0)
-        for j in range(len(X)):
-            X[j] = X[j] + p0*V[0][j] + p1 * V[1][j] + p2*V[2][j]
-            
-        t = t + tau    
-        timeaxis.append(t)
-        productattime.append(X[2])
-        substrateattime.append(X[0])  
-        concentrationattime.append(X.copy())
-        
+X = [500,200,0,0]
+a=[0,0,0]
+t=0
+tfinal = 30
+timeaxis = [0]
+concentrationattime = [X.copy()]
+productattime = [X[2]]
+substrateattime =  [X[0]]
+reactions0 = []
 
-      
-    Con = findconstants(X_var, Y_var, Z_var)
-    print(Con)
-    I_inverse = FishermatrixinversePD(X_var,Y_var,Z_var,Con[0],Con[1])
-    print(Con[0]-  I_inverse[0][0]**0.5 * 1.96, Con[0]+  I_inverse[0][0]**0.5 * 1.96 )
-    print(Con[1]-  I_inverse[1][1]**0.5 * 1.96, Con[1]+  I_inverse[1][1]**0.5 * 1.96 )  
+X_var =[]
+Y_var = []
+Z_var = []
+
+
+
+while t<tfinal:
+    X_var.append(X[0]*X[1]*tau)
+    Y_var.append(X[2]*tau)
+    a[0] = c[0]*X[0]*X[1]
+    a[1] = c[1]*X[2]
+    a[2] = c[2]*X[2]
+    p0 = np.random.poisson(a[0]*tau)
+    p1 = np.random.poisson(a[1]*tau)
+    p2 = np.random.poisson(a[2]*tau)
+    Z_var.append(p0-p1)
+    p = [p0,p1,p2]
+    reactions0.append(p0)
+    for j in range(len(X)):
+        X[j] = X[j] + p0*V[0][j] + p1 * V[1][j] + p2*V[2][j]
+        
+    t = t + tau    
+    timeaxis.append(t)
+    productattime.append(X[2])
+    substrateattime.append(X[0])  
+    concentrationattime.append(X.copy())
     
-    if(c[0]<Con[0]+  I_inverse[0][0]**0.5 * 1.96 and c[0] > Con[0]-  I_inverse[0][0]**0.5 * 1.96 ):
-        print("erin", k)
-        erin = erin+1
+
+  
+Con = findconstants(X_var, Y_var, Z_var)
+print(Con)
+I_inverse = FishermatrixinversePD(X_var,Y_var,Z_var,Con[0],Con[1])
+print(Con[0]-  I_inverse[0][0]**0.5 * 1.96, Con[0]+  I_inverse[0][0]**0.5 * 1.96 )
+print(Con[1]-  I_inverse[1][1]**0.5 * 1.96, Con[1]+  I_inverse[1][1]**0.5 * 1.96 )  
+
 '''
 plt.plot(timeaxis,productattime, 'x')    
 plt.plot(timeaxis,substrateattime, 'x')   
